@@ -50,8 +50,16 @@ def MakeLinks(target_folder):
       p = p.replace(".","\\")
       target_folder = stitch_folder
     else:
-      p = ""
+      try:
+        p = f[1].split("Collections.")[1]
+        p = p.split(",")[0]
+        p = p.replace(".","\\")
+        p = "Collections/%s" %p
+      except:
+        p = ""
+      
     path = "%s\%s" %(target_folder, p)
+    print "Output Location: %s" %path
     d.setdefault('outpath',path)
     l.append(("[%s]" %path,d))
   return l
@@ -95,9 +103,9 @@ def AllLinks():
   rFile = open(r"%s\AllLinks.txt" %(location), 'r')
   l = rFile.readlines()
   aFile.close()
-  wFile = open("last_location.txt",'w')
-  wFile.write(target_folder)
-  wFile.close()
+#  wFile = open("last_location.txt",'w')
+#  wFile.write(target_folder)
+#  wFile.close()
   return l
 
 def createHardLinks(l):
