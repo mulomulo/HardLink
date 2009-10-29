@@ -1,7 +1,8 @@
 import os
 import win32file
 stitch_folder = r"C:\Users\Horst\Pictures\Output\Stitch"
-
+location = r"C:\Users\Horst\Documents\Image Databases\HardLinks"
+stitch_folder = "%s/Stitch" %location
 def HardLink(src, dst):
   """Hard link function
 
@@ -203,7 +204,7 @@ def writeMetaDataXMP(d):
     wFile.close()
   
   
-location = r"C:\Users\Horst\Documents\Image Databases\HardLinks"
+
 target_folder = "%s\%s" %(location, raw_input("Folder Name: "))
 if target_folder.strip('\\') == location:
   rFile = open("last_location.txt",'r')
