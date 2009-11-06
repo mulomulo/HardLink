@@ -135,6 +135,43 @@ def createHardLinks(l):
       
   print "Copied %i HardLinks" %i
   
+def deal_with_existing_xmp(path, xmp_d):
+  tags = ['xmlns:photoshop', 'xmlns:Iptc4xmpCore', 'xmlns:lr', 'xmlns:xap']
+  rFile = open(path, 'r')
+  f = rFile.readlines()[2:-2]
+  rFile.close()
+  
+  txt_l = []
+  ignore = False
+  i = 0
+  for line in f:
+    line = line
+    if not line:
+      continue
+    i += 1
+    
+    if ignore and "</rdf:Description>" not in line:
+      continue
+    elif ignore and "</rdf:Description>":
+      ignore = False
+      continue
+      
+    for tag in tags:
+      if tag in line:
+        ignore = True
+        txt_l = txt_l[:-1]
+        continue
+    if not ignore:
+      txt_l.append(line)
+  
+  wFile = open(path, 'w')
+
+  wFile.write(xmp_d['header'])
+  for line in txt_l:
+    wFile.write(line)
+  wFile.write(xmp_d['add'])
+  wFile.write(xmp_d['footer'])
+
 def writeMetaDataXMP(d):
   xmp_header = '''
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 4.2-c020 1.124078, Tue Sep 11 2007 23:21:40">
@@ -151,6 +188,7 @@ def writeMetaDataXMP(d):
    <xap:MetadataDate>2009-10-20T15:47:46.144-01:00</xap:MetadataDate>
    <xap:Label>%(colour)s</xap:Label>
   </rdf:Description>
+  
   <rdf:Description rdf:about=""
     xmlns:lr="http://ns.adobe.com/lightroom/1.0/">
    <lr:hierarchicalSubject>
@@ -169,32 +207,26 @@ def writeMetaDataXMP(d):
    </Iptc4xmpCore:Scene>
    <Iptc4xmpCore:Location>%(location)s</Iptc4xmpCore:Location>
   </rdf:Description>
+  
   <rdf:Description rdf:about=""
     xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/">
    <photoshop:City>%(city)s</photoshop:City>
    <photoshop:State>%(district)s</photoshop:State>
    <photoshop:Country>%(country)s</photoshop:Country>
   </rdf:Description>
+  
   ''' %(d)
 
   xmp_footer = '''
   </rdf:RDF>
 </x:xmpmeta>
   '''
-  
+
+  xmp_d = {'header':xmp_header, 'add':xmp_add, 'footer':xmp_footer}
   
   path = "%(outpath)s/%(filename)s.xmp" %d
-#  if os.path.exists(path):
-  if path == "Fred":
-    rFile = open(path, 'r')
-    f = rFile.readlines()
-    rFile.close()
-    wFile = open(path, 'w')
-    for line in f[:-2]:
-      wFile.write(line)
-    wFile.write(xmp_add)
-    for line in f[-2:]:
-      wFile.write(line)
+  if os.path.exists(path):
+    deal_with_existing_xmp(path, xmp_d)
   
   else:
     wFile = open(path, 'w')
