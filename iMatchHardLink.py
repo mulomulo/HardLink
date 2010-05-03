@@ -144,7 +144,6 @@ def deal_with_existing_xmp(path, xmp_d):
   rFile = open(path, 'r')
   f = rFile.readlines()[2:-2]
   rFile.close()
-  
   txt_l = []
   ignore = False
   i = 0
@@ -177,13 +176,11 @@ def deal_with_existing_xmp(path, xmp_d):
   wFile.write(xmp_d['footer'])
 
 def writeMetaDataXMP(d):
-  xmp_header = '''
-<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 4.2-c020 1.124078, Tue Sep 11 2007 23:21:40">
+  xmp_header = '''<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 4.2-c020 1.124078, Tue Sep 11 2007 23:21:40">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  '''
+ '''
 
-  xmp_add = r'''
-  <rdf:Description rdf:about=""
+  xmp_add = r'''<rdf:Description rdf:about=""
     xmlns:xap="http://ns.adobe.com/xap/1.0/">
    <xap:ModifyDate>2009-09-11T09:24:37.50+01:00</xap:ModifyDate>
    <xap:CreateDate>2009-09-11T09:24:37.50+01:00</xap:CreateDate>
@@ -192,7 +189,7 @@ def writeMetaDataXMP(d):
    <xap:MetadataDate>2009-10-20T15:47:46.144-01:00</xap:MetadataDate>
    <xap:Label>%(colour)s</xap:Label>
   </rdf:Description>
-  
+ 
   <rdf:Description rdf:about=""
     xmlns:lr="http://ns.adobe.com/lightroom/1.0/">
    <lr:hierarchicalSubject>
@@ -218,13 +215,11 @@ def writeMetaDataXMP(d):
    <photoshop:State>%(district)s</photoshop:State>
    <photoshop:Country>%(country)s</photoshop:Country>
   </rdf:Description>
-  
   ''' %(d)
 
-  xmp_footer = '''
-  </rdf:RDF>
+  xmp_footer = '''</rdf:RDF>
 </x:xmpmeta>
-  '''
+'''
 
   xmp_d = {'header':xmp_header, 'add':xmp_add, 'footer':xmp_footer}
   
