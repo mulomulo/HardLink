@@ -45,12 +45,16 @@ def MakeLinks(target_folder):
     d.setdefault('rating',f[2])
     d.setdefault('colour',f[3].title().strip())
     
-    if target_folder.endswith('Stitch'):
-      p = f[1].split("_types.Stitch.")[1]
-      p = p.split(",")[0]
-      p = p.replace(".","\\")
-      target_folder = stitch_folder
-    else:
+    specials = ['Stitch','HDR']
+    is_special = False
+    for special in specials:
+      if target_folder.endswith(special):
+        p = f[1].split("_types.%s." %special)[1]
+        p = p.split(",")[0]
+        p = p.replace(".","\\")
+        target_folder = "%s/%s" %(location, special)
+        is_special = True
+    if not is_special:
       try:
         p = f[1].split("Collections.")[1]
         p = p.split(",")[0]
