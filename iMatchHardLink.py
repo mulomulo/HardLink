@@ -3,7 +3,12 @@ import win32file
 
 class CreateHardLinks():
   def __init__(self):
-    self.drive_letter = "O"
+    working_directory = os.getcwd() + "\Scripts\HardLink"
+    print working_directory
+    rFile = open(r"%s\link.txt" %working_directory , 'r')
+    self.drive_letter = rFile.readline().strip()
+    self.files = rFile.readlines()[1:]
+    rFile.close()
     self.stitch_folder = r"%s:\Users\Horst\Pictures\Output\Stitch" %self.drive_letter
     self.location = r"%s:\Users\Horst\Pictures\HardLinks" %self.drive_letter
     self.stitch_folder = "%s\Stitch" %self.location
@@ -35,10 +40,11 @@ class CreateHardLinks():
   def MakeLinks(self, target_folder):
     self.log.write("Hardlink Export started")
     l = []
-    rFile = open(r"%s\link.txt" %(self.location), 'r')
-    files = rFile.readlines()
-    rFile.close()
-    for file in files:
+    #rFile = open(r"%s\link.txt" %(self.location), 'r')
+    #rFile = open(r"link.txt", 'r')
+    #files = rFile.readlines()
+    #rFile.close()
+    for file in self.files:
       d = {}
       f = file.split("\t")
 
