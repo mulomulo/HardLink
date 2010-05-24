@@ -3,10 +3,11 @@ import win32file
 
 class CreateHardLinks():
   def __init__(self):
-    self.stitch_folder = r"C:\Users\Horst\Pictures\Output\Stitch"
-    self.location = r"C:\Users\Horst\Documents\Image Databases\HardLinks"
-    self.stitch_folder = "%s/Stitch" %self.location
-    self.workpath = "C:\Users\Horst\Documents\Image Databases"
+    self.drive_letter = "O"
+    self.stitch_folder = r"%s:\Users\Horst\Pictures\Output\Stitch" %self.drive_letter
+    self.location = r"%s:\Users\Horst\Pictures\HardLinks" %self.drive_letter
+    self.stitch_folder = "%s\Stitch" %self.location
+    self.workpath = "%s:\Users\Horst\Pictures\DB\Scripts" %self.drive_letter
     pass
 
 
@@ -14,14 +15,14 @@ class CreateHardLinks():
     self.log = open(r'%s\log.txt' %self.workpath, 'w')
   def close_log(self):
     self.log.close()
-  
+
   def HardLink(self, src, dst):
     """Hard link function
-  
+
     Args:
       src: Source filename to link to.
       dst: Destination link name to create.
-  
+
     Raises:
       OSError: The link could not be created.
     """
@@ -40,24 +41,24 @@ class CreateHardLinks():
     for file in files:
       d = {}
       f = file.split("\t")
-  
+
       name = f[0].split("\\")[-1:][0][:-4]
-      
+
       d = self.get_location(f, d)
-      
+
       categories = ""
       categories_l = f[1].split(',')
       for category in categories_l:
         cat = category.split(".")
         #cat.reverse()
         cat = "|".join(cat)
-        categories += "<rdf:li>%s</rdf:li>\n" %cat 
+        categories += "<rdf:li>%s</rdf:li>\n" %cat
       d.setdefault('filefull',f[0])
       d.setdefault('filename', name)
       d.setdefault('categories',categories)
       d.setdefault('rating',f[2])
       d.setdefault('colour',f[3].title().strip())
-      
+
       specials = ['Stitch','HDR']
       is_special = False
       for special in specials:
@@ -75,26 +76,26 @@ class CreateHardLinks():
           p = "Collections/%s" %p
         except:
           p = ""
-        
+
       path = "%s\%s" %(target_folder, p)
-      
+
       msg = "Output self.location: %s\n" %path
       print(msg)
       self.log.write(msg)
-  
+
       d.setdefault('outpath',path)
       l.append(("[%s]" %path,d))
     return l
-  
+
   def get_location(self, f, d):
     loc = f[1].split(',')
     longest = 0
     ll = ""
-    
+
     ids_l = ['continent', 'country', 'region', 'district', 'city', 'self.location', 'scene']
     for item in ids_l:
       d.setdefault(item,"")
-  
+
     for item in loc:
       if item.startswith('self.location.'):
         if len(item) > longest:
@@ -102,16 +103,16 @@ class CreateHardLinks():
             ll = item
     if not ll:
       return d
-    
+
     self.location_l = ll.split('.')
-    
+
     i = 0
     for item in self.location_l:
       if item != "self.location":
         d[ids_l[i]] = item
         i += 1
     return d
-  
+
   def AllLinks(self, ):
     aFile = open(r"%s\AllLinks.txt" %(self.location), 'a')
     rFile = open(r"%s\link.txt" %(self.location), 'r')
@@ -129,17 +130,17 @@ class CreateHardLinks():
   #  wFile.write(target_folder)
   #  wFile.close()
     return l
-  
+
   def createHardLinks(self, l):
     i = 0
     for line, d in l:
       if line.startswith("["):
         target_folder = line.lstrip("[").rstrip("]\n")
       i += 1
-      
+
       if not os.path.exists(target_folder):
         os.makedirs(target_folder)
-        
+
       src = d['filefull']
       name = src.split("\\")[-1:][0]
       dst = "%s/%s" %(target_folder, name)
@@ -157,13 +158,13 @@ class CreateHardLinks():
         msg = "Failed with XMP writing\n"
         print(msg)
         self.log.write(msg)
-        
+
     msg = "Copied %i HardLinks\n" %i
     print(msg)
     self.log.write(msg)
     self.log.close()
-  
-    
+
+
   def deal_with_existing_xmp(self, path, xmp_d):
     tags = ['xmlns:photoshop', 'xmlns:Iptc4xmpCore', 'xmlns:lr', 'xmlns:xap']
     rFile = open(path, 'r')
@@ -177,13 +178,13 @@ class CreateHardLinks():
       if not line:
         continue
       i += 1
-      
+
       if ignore and "</rdf:Description>" not in line:
         continue
       elif ignore and "</rdf:Description>":
         ignore = False
         continue
-        
+
       for tag in tags:
         if tag in line:
           ignore = True
@@ -191,20 +192,20 @@ class CreateHardLinks():
           continue
       if not ignore:
         txt_l.append(line)
-    
+
     wFile = open(path, 'w')
-  
+
     wFile.write(xmp_d['header'])
     for line in txt_l:
       wFile.write(line)
     wFile.write(xmp_d['add'])
     wFile.write(xmp_d['footer'])
-  
+
   def writeMetaDataXMP(self, d):
     xmp_header = '''<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 4.2-c020 1.124078, Tue Sep 11 2007 23:21:40">
    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    '''
-  
+
     xmp_add = r'''<rdf:Description rdf:about=""
       xmlns:xap="http://ns.adobe.com/xap/1.0/">
      <xap:ModifyDate>2009-09-11T09:24:37.50+01:00</xap:ModifyDate>
@@ -214,7 +215,7 @@ class CreateHardLinks():
      <xap:MetadataDate>2009-10-20T15:47:46.144-01:00</xap:MetadataDate>
      <xap:Label>%(colour)s</xap:Label>
     </rdf:Description>
-   
+
     <rdf:Description rdf:about=""
       xmlns:lr="http://ns.adobe.com/lightroom/1.0/">
      <lr:hierarchicalSubject>
@@ -223,7 +224,7 @@ class CreateHardLinks():
       </rdf:Bag>
      </lr:hierarchicalSubject>
     </rdf:Description>
-  
+
     <rdf:Description rdf:about=""
       xmlns:Iptc4xmpCore="http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/">
      <Iptc4xmpCore:Scene>
@@ -233,7 +234,7 @@ class CreateHardLinks():
      </Iptc4xmpCore:Scene>
      <Iptc4xmpCore:self.location>%(self.location)s</Iptc4xmpCore:self.location>
     </rdf:Description>
-    
+
     <rdf:Description rdf:about=""
       xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/">
      <photoshop:City>%(city)s</photoshop:City>
@@ -241,25 +242,25 @@ class CreateHardLinks():
      <photoshop:Country>%(country)s</photoshop:Country>
     </rdf:Description>
     ''' %(d)
-  
+
     xmp_footer = '''</rdf:RDF>
   </x:xmpmeta>
   '''
-  
+
     xmp_d = {'header':xmp_header, 'add':xmp_add, 'footer':xmp_footer}
-    
+
     path = "%(outpath)s/%(filename)s.xmp" %d
     if os.path.exists(path):
       deal_with_existing_xmp(path, xmp_d)
-    
+
     else:
       wFile = open(path, 'w')
       wFile.write(xmp_header)
       wFile.write(xmp_add)
       wFile.write(xmp_footer)
       wFile.close()
-  
-      
+
+
   def run(self):
     self.open_log()
     target_folder = "%s\%s" %(self.location, raw_input("Folder Name: "))
