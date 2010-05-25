@@ -3,11 +3,12 @@ import win32file
 
 class CreateHardLinks():
   def __init__(self):
-    working_directory = os.getcwd() + "\Scripts\HardLink"
+    DriveLetter = os.getcwd()[:1]
+    working_directory =  r"%s:\Users\Horst\Pictures\DB\Scripts\HardLink" %DriveLetter
     print working_directory
     rFile = open(r"%s\link.txt" %working_directory , 'r')
     self.drive_letter = rFile.readline().strip()
-    self.files = rFile.readlines()[1:]
+    self.files = rFile.readlines()
     rFile.close()
     self.stitch_folder = r"%s:\Users\Horst\Pictures\Output\Stitch" %self.drive_letter
     self.location = r"%s:\Users\Horst\Pictures\HardLinks" %self.drive_letter

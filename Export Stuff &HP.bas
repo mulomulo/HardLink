@@ -12,6 +12,7 @@ Sub Main
 	' Get the image selection from the active folder
 	Dim imgs As Images
 	Dim db As Database
+	Dim DriveLetter As String
 	Set db = Application.ActiveDatabase
 	If db Is Nothing Then
 		MsgBox "Please open a database first!"
@@ -24,6 +25,9 @@ Sub Main
 		Exit Sub
 	End If
 
+	DriveLetter = db.ActiveFolder.Path()
+	DriveLetter = Left$(DriveLetter,1)
+
 	' Open a standard file dialog box and let the user select or enter a file name'
 	Dim filename As String
 	'filename = GetFilePath("*.txt","txt", , "Please choose a file", 3+4)
@@ -33,11 +37,12 @@ Sub Main
 	'	Exit Sub
 	'End If
 
-	filename = "C:\Users\Horst\Documents\Image Databases\HardLinks\link.txt"
+	filename = DriveLetter & ":\Users\Horst\Pictures\DB\Scripts\HardLink\link.txt"
 
 	' Open/Create the file
 	gblFH = FreeFile
 	Open filename For Output As gblFH
+    Print #gblFH, DriveLetter;vbCrLf;
 
 	' Enable the percentage status bar
 	Application.StatusBarShowPercentage 0, imgs.Count
@@ -81,8 +86,8 @@ Sub Main
 	Close gblFH
 
 	' Open the file with notepad
-	'Shell "C:\Python26\python.exe C:\Users\Horst\Documents\PythonScripts\HardLink\iMatchHardlink.py"
-    Shell  "O:\Users\Horst\Pictures\db\Scripts\HardLink\hl.bat"
+	Shell "C:\Python26\python.exe " & DriveLetter & ":\Users\Horst\Pictures\DB\Scripts\HardLink\iMatchHardlink.py", vbNormalFocus
+    'Shell  DriveLetter & ":\Users\Horst\Pictures\DB\Scripts\HardLink\hl.bat", vbNormalFocus
 
 	'Shell "notepad.exe " & filename, vbNormalFocus
 
