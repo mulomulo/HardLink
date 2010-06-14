@@ -58,8 +58,10 @@ class CreateHardLinks():
       for category in categories_l:
         cat = category.split(".")
         #cat.reverse()
-        cat = "|".join(cat)
-        categories += "<rdf:li>%s</rdf:li>\n" %cat
+        if cat[0]:
+          cat = "|".join(cat)
+          categories += "<rdf:li>%s</rdf:li>\n" %cat
+
       d.setdefault('filefull',f[0])
       d.setdefault('filename', name)
       d.setdefault('categories',categories)
@@ -215,11 +217,8 @@ class CreateHardLinks():
 
     xmp_add = r'''<rdf:Description rdf:about=""
       xmlns:xap="http://ns.adobe.com/xap/1.0/">
-     <xap:ModifyDate>2009-09-11T09:24:37.50+01:00</xap:ModifyDate>
-     <xap:CreateDate>2009-09-11T09:24:37.50+01:00</xap:CreateDate>
      <xap:CreatorTool>Ver.1.10</xap:CreatorTool>
      <xap:Rating>%(rating)s</xap:Rating>
-     <xap:MetadataDate>2009-10-20T15:47:46.144-01:00</xap:MetadataDate>
      <xap:Label>%(colour)s</xap:Label>
     </rdf:Description>
 
