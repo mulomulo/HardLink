@@ -1,9 +1,14 @@
 import os
 import win32file
+import sys
 
 class CreateHardLinks():
   def __init__(self):
-    DriveLetter = os.getcwd()[:1]
+    DriveLetter = None
+    if len(sys.argv) > 1:
+      DriveLetter = sys.argv[1]
+    if not DriveLetter:
+      DriveLetter = os.getcwd()[:1]
     working_directory =  r"%s:\Users\Horst\Pictures\DB\Scripts\HardLink" %DriveLetter
     print working_directory
     rFile = open(r"%s\link.txt" %working_directory , 'r')

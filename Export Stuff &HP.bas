@@ -86,7 +86,7 @@ Sub Main
 	Close gblFH
 
 	' Open the file with notepad
-	Shell "C:\Python26\python.exe " & DriveLetter & ":\Users\Horst\Pictures\DB\Scripts\HardLink\iMatchHardlink.py", vbNormalFocus
+	Shell Environ$("COMSPEC") & " /k " & "C:\Python26\python.exe " & DriveLetter & ":\Users\Horst\Pictures\DB\Scripts\HardLink\iMatchHardlink.py" & " " & DriveLetter, vbNormalFocus
     'Shell  DriveLetter & ":\Users\Horst\Pictures\DB\Scripts\HardLink\hl.bat", vbNormalFocus
 
 	'Shell "notepad.exe " & filename, vbNormalFocus
